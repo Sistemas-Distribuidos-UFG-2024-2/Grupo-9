@@ -1,4 +1,5 @@
 Aula dia 20/09 
+  - Entregar pitch do trabalho que vamos apresentar (1° Principal)
   - Balanciador de carga: Mascaramento de IP um proxy (Problema porque precisa ser multi thread)
   - Comunicação em grupo: pode resolver o problema dos ips 
   - Tentar utilizar uma solução totalmente assíncrona 
