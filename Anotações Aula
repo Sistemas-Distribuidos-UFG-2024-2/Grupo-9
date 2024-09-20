@@ -1,6 +1,8 @@
 Aula dia 20/09 
   - Entregar pitch do trabalho que vamos apresentar (1° Principal)
-  - Balanciador de carga: Mascaramento de IP um proxy (Problema porque precisa ser multi thread)
+  - Balanciador de carga: Precisamos definir o que seria carga, analisar e armazenar, o balanciar seria perguntar como esta os servidores
+    pode ir direto na tabela que o balanciador esta armazenando dados.
+  - Mascaramento de IP um proxy (Problema porque precisa ser multi thread)
   - Comunicação em grupo: pode resolver o problema dos ips 
   - Tentar utilizar uma solução totalmente assíncrona 
   - Servidor precisa ficar redundante e replicavel, ser identicos e atualizar todos quando tiver modificações
