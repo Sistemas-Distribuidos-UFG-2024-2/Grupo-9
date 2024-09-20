@@ -1,4 +1,4 @@
 Aula dia 20/09 
-  - Balanciador de carga: Mascaramento de IP um proxy
+  - Balanciador de carga: Mascaramento de IP um proxy (Problema porque precisa ser multi thread)
   - Comunicação em grupo: pode resolver o problema dos ips 
   - Tentar utilizar uma solução totalmente assíncrona 
