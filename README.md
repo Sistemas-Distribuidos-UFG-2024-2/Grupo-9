@@ -8,4 +8,7 @@
 
     Yatherson Lucas Teodoro Souza
     Matrícula: 201912485
+
+    Reydner Miranda Nunes
+    Matrícula: 201907501
     
