@@ -6,3 +6,4 @@ Aula dia 20/09
   - Comunicação em grupo: pode resolver o problema dos ips 
   - Tentar utilizar uma solução totalmente assíncrona 
   - Servidor precisa ficar redundante e replicavel, ser identicos e atualizar todos quando tiver modificações
+  - Teste de estresse de sistema 
