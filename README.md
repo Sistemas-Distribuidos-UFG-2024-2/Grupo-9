@@ -12,3 +12,5 @@
     Reydner Miranda Nunes
     Matrícula: 201907501
     
+    Gabriel Silva Miranda
+    Matrícula: 201907464
