@@ -6,7 +6,8 @@
 
 #define MAX_ATTEMPTS 3
 #define BUFFER_SIZE 1024
-#define NUM_PORTS 3
+#define MCAST_GRP "224.1.1.1"
+#define MCAST_PORT 5007
 #define NUM_MESSAGES 20
 
 #pragma comment(lib, "ws2_32.lib")
@@ -22,90 +23,83 @@ void log_message(const char* format, ...) {
 int main() {
     WSADATA wsaData;
     SOCKET sock = INVALID_SOCKET;
-    struct sockaddr_in server;
+    struct sockaddr_in localAddr, multicastAddr;
     char message[BUFFER_SIZE] = "Hello";
     char buffer[BUFFER_SIZE] = {0};
-    int ports[] = {8888, 8889, 8890};  // Array of ports to try
+    int tries = 0;
+    struct ip_mreq mreq;
 
-    // Initialize Winsock
     if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
         log_message("WSAStartup failed\n");
         return 1;
     }
 
-    server.sin_addr.s_addr = inet_addr("127.0.0.1");
-    server.sin_family = AF_INET;
-
-    int attempts = 0;
-    int connected = 0;
-
-    while (attempts < MAX_ATTEMPTS && !connected) {
-        for (int i = 0; i < NUM_PORTS; i++) {
-            // Create socket
-            sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-            if (sock == INVALID_SOCKET) {
-                log_message("Could not create socket\n");
-                WSACleanup();
-                return 1;
-            }
-
-            server.sin_port = htons(ports[i]);
-
-            // Connect to server
-            if (connect(sock, (struct sockaddr *)&server, sizeof(server)) == SOCKET_ERROR) {
-                log_message("Connection failed on port %d. Retrying...\n", ports[i]);
-                closesocket(sock);
-                continue;
-            }
-
-            log_message("Connected to server on port %d\n", ports[i]);
-            connected = 1;
-            break;
-        }
-
-        attempts++;
-        if (!connected && attempts < MAX_ATTEMPTS) {
-            log_message("Attempt %d failed. Retrying in 1 second...\n", attempts);
-            Sleep(1000);  // Sleep for 1 second
-        }
+    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (sock == INVALID_SOCKET) {
+        log_message("Could not create socket\n");
+        WSACleanup();
+        return 1;
     }
 
-    if (!connected) {
-        log_message("Max attempts reached. Exiting.\n");
+    // Configurar endereço local
+    memset(&localAddr, 0, sizeof(localAddr));
+    localAddr.sin_family = AF_INET;
+    localAddr.sin_addr.s_addr = INADDR_ANY;
+    localAddr.sin_port = htons(0);  // Use uma porta aleatória
+
+    // Bind to the local address
+    if (bind(sock, (struct sockaddr *)&localAddr, sizeof(localAddr)) == SOCKET_ERROR) {
+        log_message("Bind failed with error: %d\n", WSAGetLastError());
         closesocket(sock);
         WSACleanup();
         return 1;
     }
 
-    // Send 20 messages
+    // Configurar endereço multicast
+    memset(&multicastAddr, 0, sizeof(multicastAddr));
+    multicastAddr.sin_family = AF_INET;
+    multicastAddr.sin_addr.s_addr = inet_addr(MCAST_GRP);
+    multicastAddr.sin_port = htons(MCAST_PORT);
+
+    log_message("Sending to multicast group %s on port %d\n", MCAST_GRP, MCAST_PORT);
+
+    // Loop principal para enviar mensagens
     for (int msg = 0; msg < NUM_MESSAGES; msg++) {
-        // Send message
-        if (send(sock, message, strlen(message), 0) == SOCKET_ERROR) {
-            log_message("Send failed for message %d\n", msg + 1);
+        if (sendto(sock, message, strlen(message), 0, (struct sockaddr*)&multicastAddr, sizeof(multicastAddr)) == SOCKET_ERROR) {
+            log_message("Send failed with error: %d\n", WSAGetLastError());
             break;
         }
 
         log_message("Sent message %d: %s\n", msg + 1, message);
 
-        // Receive response
-        int bytes_received = recv(sock, buffer, BUFFER_SIZE, 0);
-        if (bytes_received == SOCKET_ERROR) {
-            log_message("Recv failed for message %d\n", msg + 1);
-            break;
+        // Configurar para receber resposta
+        fd_set readfds;
+        struct timeval tv;
+        FD_ZERO(&readfds);
+        FD_SET(sock, &readfds);
+        tv.tv_sec = 5;  // 5 segundos de timeout
+        tv.tv_usec = 0;
+
+        // Aguardar resposta
+        int ready = select(sock + 1, &readfds, NULL, NULL, &tv);
+        if (ready > 0) {
+            int fromLen = sizeof(multicastAddr);
+            int recv_len = recvfrom(sock, buffer, BUFFER_SIZE, 0, (struct sockaddr*)&multicastAddr, &fromLen);
+            if (recv_len > 0) {
+                buffer[recv_len] = '\0';
+                log_message("Received response: %s\n", buffer);
+            } else {
+                log_message("recvfrom failed with error: %d\n", WSAGetLastError());
+            }
+        } else if (ready == 0) {
+            log_message("No response received (timeout)\n");
+        } else {
+            log_message("select failed with error: %d\n", WSAGetLastError());
         }
 
-        buffer[bytes_received] = '\0';  // Ensure null-termination
-        log_message("Received response for message %d: %s\n", msg + 1, buffer);
-
-        if (strcmp(buffer, "World") != 0) {
-            log_message("Unexpected response for message %d. Exiting.\n", msg + 1);
-            break;
-        }
-
-        memset(buffer, 0, BUFFER_SIZE);  // Clear buffer for next message
+        memset(buffer, 0, BUFFER_SIZE);
+        Sleep(1000);
     }
-
-    log_message("Finished sending messages.\n");
 
     closesocket(sock);
     WSACleanup();
