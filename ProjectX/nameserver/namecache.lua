@@ -9,18 +9,17 @@ new_namecache = function()
     local namecache_port = os.getenv("NAMECACHE_PORT")
     namecache.names = {}
     local utils = require("utils")
-    local namecacher = require("namecache")
 
     function namecache:add_entry(name, ip)
         local entry = {name,ip}
-        if namecacher:get_entry(name,ip) == 200 then
+        if namecache:get_entry(name,ip) == 200 then
             return 200,entry
         end
         for i,v in ipairs(namecache.names) do
             if v[1] == name then
                 table.insert(namecache.names[i],ip)
                 print("Inserted entry "..namecache.names[i][1]..": "..ip)
-                if namecacher:sync_with_replicas("POST",entry) == 200 and namecacher:get_entry(entry[1],nil) == 404 then
+                if namecache:sync_with_replicas("POST",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
                     print("Sync with other replicas done!")
                 end
                 return 200,name,ip
@@ -28,7 +27,7 @@ new_namecache = function()
         end
         table.insert(namecache.names, entry)
         print("Inserted entry "..entry[1]..": "..entry[2])
-        if namecacher:sync_with_replicas("POST",entry) == 200  then
+        if namecache:sync_with_replicas("POST",entry) == 200  then
             print("Sync with other replicas done!")
         end
         return 200,entry
@@ -41,14 +40,14 @@ new_namecache = function()
                 for k=1, #namecache.names[i] do
                     if namecache.names[i][k] == ip then
                         table.remove(namecache.names[i],k)
-                        if namecacher:sync_with_replicas("DELETE",entry) == 200 and namecacher:get_entry(entry[1],nil) == 404 then
+                        if namecache:sync_with_replicas("DELETE",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
                             print("Sync with other replicas done!")
                         end
                         return 200,name,ip
                     end
                 end
                 table.remove(namecache.names,i)
-                if namecacher:sync_with_replicas("DELETE",entry) == 200 and namecacher:get_entry(entry[1],nil) == 404 then
+                if namecache:sync_with_replicas("DELETE",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
                     print("Sync with other replicas done!")
                 end
                 return 200,name,ip
@@ -103,12 +102,15 @@ new_namecache = function()
         return 404
     end
 
-    function namecache:sync_with_replicas(entry)
-        local namecache_replicas = namecacher:get_all_entries("namecache")
+    function namecache:sync_with_replicas(mode,entry)
+        local status, namecache_replicas = namecache:get_all_entries("namecache")
+        if status == 404 then
+            return 404
+        end
         if #namecache_replicas < 3 then
             return 404
         end
-        local post_request = "POST /"..entry[1].."?"..entry[2]
+        local post_request = mode.." /"..entry[1].."?"..entry[2]
         if utils:multicast(post_request,namecache_replicas,namecache_port) == 200 then
             return 200
         else

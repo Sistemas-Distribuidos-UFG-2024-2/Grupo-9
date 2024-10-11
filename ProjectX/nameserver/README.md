@@ -27,3 +27,27 @@ Esse serviço ainda está em desenvolvimento e precisa de muitas melhorias, como
 - Falta autenticação
 - Algumas partes do código estão estranhas
 - Pouco comentário
+
+## Como rodar esse projeto
+
+Esse projeto usa apenas Lua e suas bibliotecas padrão, então rodá-lo é bem simples.
+
+### Usando Docker
+
+É possível rodar esse projeto usando Docker da seguinte forma:
+
+- Primeiro faça o build com `docker build -t nameserver:latest .`
+- Rode a imagem com `docker run -p 3000:3000/udp -e NAMECACHE_PORT=3000 nameserver`
+
+A aplicação estará disponível no seu localhost na porta 3000.
+
+### Sem Docker
+
+Para rodar a aplicação sem o Docker é necessário instalar algumas dependências:
+- Lua5.3 (https://www.lua.org/download.html)
+- LuaSocket (https://github.com/lunarmodules/luasocket)
+
+Depois de instalar as dependências é só rodar `lua main.lua` na raíz deste projeto.
+
+A porta padrão é a 3000, mas você pode mudar essa porta por meio da variável de ambiente `NAMECACHE_PORT`
+
