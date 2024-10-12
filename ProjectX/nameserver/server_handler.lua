@@ -29,7 +29,7 @@ new_server_handler = function()
             local i,_ = string.find(request,"/")
             local j,_ = string.find(request,"?")
             local name = string.sub(request,i+1,j-1)
-            local ip = string.sub(request,j+1,-1)
+            local ip = string.sub(request,j+4,-2)
             local r,_ = namecache:remove_entry(name,ip)
             server:sendto(r.."\n",client_ip,client_port)
             return r
