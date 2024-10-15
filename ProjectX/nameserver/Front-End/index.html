@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Performance Reader</title>
+        <link rel="stylesheet" href="style.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+
+        <header class="header">
+            <a href="#home" class ="logo">Performance Reader
+            <span>Sistemas Distribuídos</span></a>
+
+            <i class='bx bx-menu' id="menu-icon"></i>
+
+            <nav class="navbar">
+                <a href="#home" class="active">Home</a>
+                <a href="#about">About</a> <!-- falta criar -->
+                <a href="#contact">Contact</a> <!-- falta criar -->
+            </nav>
+        </header>
+
+        <section class="home" id="home">
+            <h2 class="heading">Project</h2>
+            <p class="heading2">Escreve algo aqui se quiser</p>
+
+            <!-- Barra de pesquisa -->
+            <input type="text" id="searchInput" placeholder="Pesquisar por Nome ou IP" class="search-bar">
+
+            <h5>Situação de Sistema:</h5>
+
+            <div class="filter-options">
+                <label><input type="checkbox" class="filter" value="#Normal"> Normal</label>
+                <label><input type="checkbox" class="filter" value="#Alerta"> Alerta</label>
+                <label><input type="checkbox" class="filter" value="#Crítico"> Crítico</label>
+                <label><input type="checkbox" class="filter" value="#Offline"> Offline</label>
+            </div>
+
+            <div class="home-container">
+                
+                <div class="home-box">
+                    <div class="home-info">
+                        <h4>Reydner | IP: 112.102.102</h4>
+                        <h3>#Normal</h3>
+                        <div class="text-container">
+                            <span class="left">GPU: </span>
+                            <div class="right">
+                                <span class="green">Nvidia</span>
+                                <span class="gray">sei la oq</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Latencia: </span>
+                            <div class="right">
+                                <span class="green">6.1</span>
+                                <span class="gray">ms</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Uso da GPU: </span>
+                            <div class="right">
+                                <span class="green">15</span>
+                                <span class="gray">%</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da GPU: </span>
+                            <div class="right">
+                                <span class="green">1500</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da memória: </span>
+                            <div class="right">
+                                <span class="green">5000</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Temperatura GPU: </span>
+                            <div class="right">
+                                <span class="green">458454</span>
+                                <span class="gray">°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="home-box">
+                    <div class="home-info">
+                        <h4>Joao | IP: 112.102.103</h4>
+                        <h3>#Crítico</h3>
+                        <div class="text-container">
+                            <span class="left">GPU: </span>
+                            <div class="right">
+                                <span class="green">Nvidia</span>
+                                <span class="gray">sei la oq</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Latencia: </span>
+                            <div class="right">
+                                <span class="green">6.1</span>
+                                <span class="gray">ms</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Uso da GPU: </span>
+                            <div class="right">
+                                <span class="green">15</span>
+                                <span class="gray">%</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da GPU: </span>
+                            <div class="right">
+                                <span class="green">1500</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da memória: </span>
+                            <div class="right">
+                                <span class="green">5000</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Temperatura GPU: </span>
+                            <div class="right">
+                                <span class="green">458454</span>
+                                <span class="gray">°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="home-box">
+                    <div class="home-info">
+                        <h4>Rafaela | IP: 112.102.104</h4>
+                        <h3>#Offline</h3>
+                        <div class="text-container">
+                            <span class="left">GPU: </span>
+                            <div class="right">
+                                <span class="green">Nvidia</span>
+                                <span class="gray">sei la oq</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Latencia: </span>
+                            <div class="right">
+                                <span class="green">6.1</span>
+                                <span class="gray">ms</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Uso da GPU: </span>
+                            <div class="right">
+                                <span class="green">15</span>
+                                <span class="gray">%</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da GPU: </span>
+                            <div class="right">
+                                <span class="green">1500</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da memória: </span>
+                            <div class="right">
+                                <span class="green">5000</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Temperatura GPU: </span>
+                            <div class="right">
+                                <span class="green">458454</span>
+                                <span class="gray">°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="home-box">
+                    <div class="home-info">
+                        <h4>Gabi | IP: 112.102.105</h4>
+                        <h3>#Alerta</h3>
+                        <div class="text-container">
+                            <span class="left">GPU: </span>
+                            <div class="right">
+                                <span class="green">Nvidia</span>
+                                <span class="gray">sei la oq</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Latencia: </span>
+                            <div class="right">
+                                <span class="green">6.1</span>
+                                <span class="gray">ms</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Uso da GPU: </span>
+                            <div class="right">
+                                <span class="green">15</span>
+                                <span class="gray">%</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da GPU: </span>
+                            <div class="right">
+                                <span class="green">1500</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da memória: </span>
+                            <div class="right">
+                                <span class="green">5000</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Temperatura GPU: </span>
+                            <div class="right">
+                                <span class="green">458454</span>
+                                <span class="gray">°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="home-box">
+                    <div class="home-info">
+                        <h4>Cleber | IP: 112.102.106</h4>
+                        <h3>#Normal</h3>
+                        <div class="text-container">
+                            <span class="left">GPU: </span>
+                            <div class="right">
+                                <span class="green">Nvidia</span>
+                                <span class="gray">sei la oq</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Latencia: </span>
+                            <div class="right">
+                                <span class="green">6.1</span>
+                                <span class="gray">ms</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Uso da GPU: </span>
+                            <div class="right">
+                                <span class="green">15</span>
+                                <span class="gray">%</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da GPU: </span>
+                            <div class="right">
+                                <span class="green">1500</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Clock da memória: </span>
+                            <div class="right">
+                                <span class="green">5000</span>
+                                <span class="gray">MHz</span>
+                            </div>
+                        </div>
+                        <div class="text-container">
+                            <span class="left">Temperatura GPU: </span>
+                            <div class="right">
+                                <span class="green">458454</span>
+                                <span class="gray">°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="about" id="about">
+
+        </section>
+
+        <script src="script.js"></script>
+        <script> AOS.init(); </script>
+    </body>
+</html>
