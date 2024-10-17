@@ -92,3 +92,35 @@ function filterBoxes() {
         }
     });
 }
+
+//=======================================================================================
+//Esse campo é para o observable ======================
+import { interval } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import axios from 'axios';
+
+const apiUrl = 'https://sua-api-gateway.com/endpoint'; // URL da API gateway
+
+// Função para fazer a requisição
+const fetchData = () => axios.get(apiUrl);
+
+// Cria um Observable que emite um valor a cada 5 segundos (5000 milissegundos)
+const requestInterval = interval(5000).pipe(
+  switchMap(() => fetchData()) // Faz a requisição a cada emissão
+);
+
+// Se inscreva no Observable para começar a receber as respostas
+requestInterval.subscribe({
+  next: (response) => {
+    console.log('Dados recebidos:', response.data);
+  },
+  error: (err) => {
+    console.error('Erro na requisição:', err);
+  }
+});
+
+/*
+-O operador interval cria um Observable que emite eventos a cada 5 segundos.
+-O operador switchMap é usado para disparar uma nova requisição cada vez que o interval emite um valor, cancelando a requisição anterior caso ela ainda esteja em andamento.
+-A função fetchData usa axios para fazer a chamada à API.
+-Você pode ajustar o intervalo e a URL da API conforme necessário.*/
