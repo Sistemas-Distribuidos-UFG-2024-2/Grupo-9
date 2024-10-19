@@ -18,7 +18,7 @@ new_namecache = function()
         for i,v in ipairs(namecache.names) do
             if v[1] == name then
                 table.insert(namecache.names[i],ip)
-                print("Inserted entry "..namecache.names[i][1]..": "..ip)
+                print("Inserted entry "..namecache.names[i][1]..": "..ip..".")
                 if namecache:sync_with_replicas("POST",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
                     print("Sync with other replicas done!")
                 end
@@ -26,7 +26,7 @@ new_namecache = function()
             end
         end
         table.insert(namecache.names, entry)
-        print("Inserted entry "..entry[1]..": "..entry[2])
+        print("Inserted entry "..entry[1]..": "..entry[2]..".")
         if namecache:sync_with_replicas("POST",entry) == 200  then
             print("Sync with other replicas done!")
         end
@@ -35,31 +35,31 @@ new_namecache = function()
 
     function namecache:remove_entry(name,ip)
         local entry = {name,ip}
-        for i,v in ipairs(namecache.names) do
-            if v[1] == name and #namecache.names[i] >= 3 then
+        for i=1, #namecache.names do
+            if namecache.names[i][1] == name then
                 if ip ~= nil then
                     for k=2, #namecache.names[i] do
                         if namecache.names[i][k] == ip then
                             table.remove(namecache.names[i],k)
-                            if namecache:sync_with_replicas("DELETE",entry) == 200 and namecache:get_entry(entry[1],entry[2]) == 404 then
+                            print("Deleted entry "..entry[1]..": "..entry[2]..".")
+                            if namecache:sync_with_replicas("DELETE",entry) == 200 then
                                 print("Sync with other replicas done!")
+                            end
+                            if #namecache.names[i] < 2 then
+                                table.remove(namecache.names,i)
+                                print("Deleted "..entry[1].." from cache because it had no entries left.")
                             end
                             return 200,name,ip
                         end
                     end
                 else
                     table.remove(namecache.names,i)
-                    if namecache:sync_with_replicas("DELETE",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
+                    print("Deleted all entries of "..entry[1].." from cache.")
+                    if namecache:sync_with_replicas("DELETE",entry) == 200 then
                         print("Sync with other replicas done!")
                     end
-                    return 200,name,ip
+                    return 200,name
                 end
-            else
-                table.remove(namecache.names,i)
-                if namecache:sync_with_replicas("DELETE",entry) == 200 and namecache:get_entry(entry[1],nil) == 404 then
-                    print("Sync with other replicas done!")
-                end
-                return 200,name,ip
             end
         end
         return 404
@@ -90,6 +90,7 @@ new_namecache = function()
             end
         end
         if (entry ~= nil) then
+            print("Returning entry "..name..": "..entry..".")
             return 200,entry
         end
         return 404

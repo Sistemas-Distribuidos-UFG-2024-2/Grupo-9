@@ -13,69 +13,69 @@ new_testing = function ()
     local coroutines = {}
 
     function testing:receive (client)
-        print("Entrando no testing:receive")
         client:settimeout(0)
         local s, status = client:receive()
-        print(s)
         if status == "timeout" then
-            print("Timeout recebido, deixando a corotina")
             coroutine.yield(client)
         end
-        print("Retornando dados")
         return s, status
     end
 
     function testing:post_request (host, port, name, ip)
-        local client_post = assert(socket.udp())
+        local client_post = assert(socket.udp4())
         local data = ""
-        print("Enviando request")
-        local _, message = client_post:sendto("POST /"..name.."?ip="..ip, host, port) -- a conexão tá sendo recusada por algum motivo
-        if message ~= nil then print(message) end
+        print("Enviando request POST para "..host..":"..port)
+        local _, message = client_post:sendto("POST /"..name.."?ip="..ip, host, port)
+        if message ~= nil then print("Erro recebido ao enviar request: "..message) end
         while true do
-            print("Recebendo dados")
             local s, status = testing:receive(client_post)
             if s ~= nil then
                 data = data..s
             end
-            if status == "closed" then
-                print("Conexão fechada")
+            if string.find(data,"\n") then
                 break
             end
-            break -- sem esse break o negócio loopa para sempre, mas provavelmente tem a ver com o bug acima
         end
-        print("Sai do loop do post")
         client_post:close()
-        print("Posted: "..name.." - "..ip.."\nReceived: "..data)
+        print("Posted: "..name.." - "..ip.." Received: "..data)
     end
 
     function testing:get_request (host, port, name)
-        local client_get = assert(socket.udp())
-        local data = "response: "
-        client_get:sendto("GET /"..name, host, port)
+        local client_get = assert(socket.udp4())
+        local data = ""
+        print("Enviando request GET para "..host..":"..port)
+        local _, message = client_get:sendto("GET /"..name, host, port)
+        if message ~= nil then print("Erro recebido ao enviar request: "..message) end
         while true do
             local s, status = testing:receive(client_get)
             if s ~= nil then
                 data = data..s
             end
-            if status == "closed" then break end
+            if string.find(data,"\n") then
+                break
+            end
         end
         client_get:close()
-        print("Get'd: "..name.."\nReceived: "..data)
+        print("Get'd: "..name.." Received: "..data)
     end
 
     function testing:delete_request (host, port, name, ip)
-        local client_delete = assert(socket.udp())
-        local data = "response: "
-        client_delete:sendto("DELETE /"..name.."?ip="..ip, host, port)
+        local client_delete = assert(socket.udp4())
+        local data = ""
+        print("Enviando request DELETE para "..host..":"..port)
+        local _, message = client_delete:sendto("DELETE /"..name.."?ip="..ip, host, port)
+        if message ~= nil then print("Erro recebido ao enviar request: "..message) end
         while true do
             local s, status = testing:receive(client_delete)
             if s ~= nil then
                 data = data..s
             end
-            if status == "closed" then break end
+            if string.find(data,"\n") then
+                break
+            end
         end
         client_delete:close()
-        print("Deleted: "..name.." - "..ip.."\nReceived: "..data)
+        print("Deleted: "..name.." - "..ip.." Received: "..data)
     end
 
     function testing:create_test(ips,host,port,names)
@@ -86,7 +86,22 @@ new_testing = function ()
                 end
                 )
                 table.insert(coroutines, co)
-                print("coroutine adicionada.")
+            end
+        end
+        for i=1, #names do
+            local co = coroutine.create(function()
+                testing:get_request(host, port, names[i])
+            end
+            )
+            table.insert(coroutines, co)
+        end
+        for i=1, #names do
+            for j=1, #ips do
+                local co = coroutine.create(function()
+                    testing:delete_request(host, port, names[i], ips[j])
+                end
+                )
+                table.insert(coroutines, co)
             end
         end
     end
@@ -97,10 +112,8 @@ new_testing = function ()
             if n == 0 then break end
             local connections = {}
             for i=1,n do
-                print("Resumindo corotina:"..i)
                 local status, res = coroutine.resume(coroutines[i])
                 if not res then
-                    print("Removendo corotina:"..i)
                     table.remove(coroutines,i)
                     break
                 else
