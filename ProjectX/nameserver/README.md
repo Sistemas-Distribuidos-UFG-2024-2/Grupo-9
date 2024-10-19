@@ -24,8 +24,13 @@ O Nameserver faz uma sincronização com suas réplicas ao receber um novo regis
 Esse serviço ainda está em desenvolvimento e precisa de muitas melhorias, como:
 - A forma de sincronização entre réplicas ainda é bem arcaica, seria mais interessante estabelecer uma rotina que fizesse a sincronização ou talvez um serviço a parte (sidecar) que fizesse esse trabalho
 - Algumas coisas poderiam ser movidas para coroutines (threads da linguagem Lua) para acelerar o processamento e evitar gargalos
+    - 
 - Falta autenticação
+    - Talvez não seja necessário implementar autenticação
 - Algumas partes do código estão estranhas
+    - O handler do servidor tem muita coisa que poderia ser movida para funções auxiliares, como o tratamento dos dados recebidos (unmarshaling)
+    - Algumas partes do Namecache usam loops com ipairs que não são necessários, é melhor usar loops numéricos
+    - Tem bastante erro não capturado, é necessário sanitizar os dados que entram principalmente no namecache (como valores de IP, que devem ser válidos, assim como os nomes)
 - Pouco comentário
 
 ## Como rodar esse projeto
@@ -51,3 +56,8 @@ Depois de instalar as dependências é só rodar `lua main.lua` na raíz deste p
 
 A porta padrão é a 3000, mas você pode mudar essa porta por meio da variável de ambiente `NAMECACHE_PORT`
 
+### Testes de Carga
+
+Esse serviço possui um script para teste de carga que gera um número qualquer de requisições de POST, GET e DELETE ao serviço.
+
+Você pode rodar o teste com `lua run_test.lua`. Esse comando roda o script `run_test.lua` que pode ser editado para ajustar o número de requests (variável `n` para alterar o número de IPs e `m` para alterar o número de nomes). O número de requests feitas é igual a `número de IPs * número de nomes`.
