@@ -4,8 +4,8 @@ local testing = require("testing")
 
 local ip = "127.0.0.1"
 local port = 3000
-local ip_quant = 30
-local name_quant = 10
+local ip_quant = 50
+local name_quant = 20
 local names = {}
 local ips = {}
 for i=1,ip_quant do

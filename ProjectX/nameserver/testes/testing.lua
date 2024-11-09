@@ -16,6 +16,7 @@ new_testing = function ()
         client:settimeout(0)
         local s, status = client:receive()
         if status == "timeout" then
+            print("timeout!")
             coroutine.yield(client)
         end
         return s, status
