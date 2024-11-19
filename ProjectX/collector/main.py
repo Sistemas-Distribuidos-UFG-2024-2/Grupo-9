@@ -48,5 +48,8 @@ async def main(interval):
                 )
 
 if __name__ == '__main__':
-    interval = sys.argv[1]
+    if len(sys.argv) > 1:
+        interval = sys.argv[1]
+    else:
+        interval = 3
     asyncio.run(main(int(interval)))

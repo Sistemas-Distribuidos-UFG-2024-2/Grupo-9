@@ -16,6 +16,12 @@ Atualmente as métricas coletadas são:
 - `uso_de_cpu_porcentagem(total)`: porcentagem de uso de CPU total (todos os núcleos)
 - `uso_de_memoria_porcentagem(total)`: porcentagem de uso de memória RAM total
 
+### Como rodar esse programa
+
+Rode usando: `python3 main.py [intervalo-de-coleta-de-metricas]`
+
+O `[intervalo-de-coleta-de-metricas]` especifica de quanto em quanto tempo (em segundos) o coletor deve atualizar as métricas. Esse valor não pode ser menor do que 1. O valor padrão (se o argumento não for passado) é 3.
+
 ### TO DO
 
 Essa versão é apenas um protótipo para possibilitar o teste do sistema distribuído de forma mais dinâmica. Muitas coisas ainda precisam ser melhoradas e implementadas:
