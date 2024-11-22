@@ -1,0 +1,43 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "MetricStorageServer";
+
+service MetricService {
+    rpc SaveMetric(SaveMetricRequest) returns (SaveMetricResponse);
+    rpc GetMetrics(GetMetricsRequest) returns (GetMetricsResponse);
+}
+
+message SaveMetricRequest {
+    string ip = 1;
+    double uso_de_cpu_porcentagem_core0 = 2;
+    double uso_de_cpu_porcentagem_core1 = 3;
+    double uso_de_memoria_porcentagem_total = 4;
+    double uso_de_memoria_porcentagem_cache = 5;
+    double uso_de_memoria_bytes_total = 6;
+    double uso_de_armazenamento_porcentagem_discoC = 7;
+    double uso_de_armazenamento_porcentagem_discoD = 8;
+    double uso_de_armazenamento_bytes_discoC = 9;
+}
+
+message SaveMetricResponse {
+    bool success = 1;
+}
+
+message GetMetricsRequest {}
+
+message GetMetricsResponse {
+    repeated Metric metrics = 1;
+}
+
+message Metric {
+    string ip = 1;
+    string timestamp = 2;
+    double uso_de_cpu_porcentagem_core0 = 3;
+    double uso_de_cpu_porcentagem_core1 = 4;
+    double uso_de_memoria_porcentagem_total = 5;
+    double uso_de_memoria_porcentagem_cache = 6;
+    double uso_de_memoria_bytes_total = 7;
+    double uso_de_armazenamento_porcentagem_discoC = 8;
+    double uso_de_armazenamento_porcentagem_discoD = 9;
+    double uso_de_armazenamento_bytes_discoC = 10;
+}
