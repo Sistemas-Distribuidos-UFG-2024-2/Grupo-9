@@ -1,10 +1,9 @@
-/* eslint-disable prettier/prettier */
+// src/app.controller.ts
 import {
   Controller,
   Get,
   Post,
   Delete,
-
   Res,
   Param,
   Body,
@@ -14,11 +13,13 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiGatewayService } from './app.service';
+import { MetricsCollectorService } from './metrics/services/metric.service';
 
 @Controller()
 export class AppController {
   constructor(
     @Inject(ApiGatewayService) private apiGatewayService: ApiGatewayService,
+    private readonly metricsService: MetricsCollectorService,
   ) { }
 
   @Get(':serviceName/:path(*)')
@@ -28,14 +29,38 @@ export class AppController {
     @Headers() headers: Record<string, string>,
     @Res() res: Response,
   ) {
+    console.log(`GET request to /${serviceName}/${path}`); // Log the endpoint
+
     try {
-      const response = await this.apiGatewayService.forwardRequest(
-        'get',
-        serviceName,
-        path,
-        headers,
-      );
-      res.status(response.status).set(response.headers).json(response.data);
+      if (serviceName === 'metrics') {
+        if (path === 'metrics') {
+          const metrics = await this.metricsService.getMetrics();
+          if (metrics) {
+            return res.status(HttpStatus.OK).json(metrics);
+          } else {
+            return res.status(HttpStatus.NO_CONTENT).send();
+          }
+        } else if (path === 'history') {
+          const history = await this.metricsService.getMetricsHistory(
+            headers['x-metrics-minutes']
+              ? parseInt(headers['x-metrics-minutes'])
+              : undefined,
+          );
+          return res.status(HttpStatus.OK).json(history);
+        } else {
+          return res
+            .status(HttpStatus.METHOD_NOT_ALLOWED)
+            .json({ message: 'Invalid metrics endpoint' });
+        }
+      } else {
+        const response = await this.apiGatewayService.forwardRequest(
+          'get',
+          serviceName,
+          path,
+          headers,
+        );
+        res.status(response.status).set(response.headers).json(response.data);
+      }
     } catch (error) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -52,6 +77,12 @@ export class AppController {
     @Res() res: Response,
   ) {
     try {
+      if (serviceName === 'metrics') {
+        return res
+          .status(HttpStatus.METHOD_NOT_ALLOWED)
+          .json({ message: 'Method not allowed for metrics service' });
+      }
+
       const response = await this.apiGatewayService.forwardRequest(
         'post',
         serviceName,
@@ -75,6 +106,12 @@ export class AppController {
     @Res() res: Response,
   ) {
     try {
+      if (serviceName === 'metrics') {
+        return res
+          .status(HttpStatus.METHOD_NOT_ALLOWED)
+          .json({ message: 'Method not allowed for metrics service' });
+      }
+
       const response = await this.apiGatewayService.forwardRequest(
         'delete',
         serviceName,

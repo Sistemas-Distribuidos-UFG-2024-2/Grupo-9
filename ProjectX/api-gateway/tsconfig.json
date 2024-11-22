@@ -16,6 +16,26 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "src/*": ["src/*"],
+      "@app/*": ["src/*"],
+      "@metrics/*": ["src/metrics/*"],
+      "@services/*": ["src/metrics/services/*"]
+    },
+    "moduleResolution": "node",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "jest.config.ts"  // Adicione esta linha
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
 }
