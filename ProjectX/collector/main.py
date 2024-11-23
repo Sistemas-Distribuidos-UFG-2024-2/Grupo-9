@@ -21,7 +21,7 @@ async def serveHttp(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print ("Socket successfully created")
 
-    sock.bind(("localhost", port))
+    sock.bind(("0.0.0.0", port))
     print ("Socket binded to", port)
 
     sock.listen(5)
