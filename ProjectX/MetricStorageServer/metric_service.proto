@@ -21,6 +21,7 @@ message SaveMetricRequest {
 
 message SaveMetricResponse {
     bool success = 1;
+    string id = 2;
 }
 
 message GetMetricsRequest {}
@@ -30,14 +31,15 @@ message GetMetricsResponse {
 }
 
 message Metric {
-    string ip = 1;
-    string timestamp = 2;
-    double uso_de_cpu_porcentagem_core0 = 3;
-    double uso_de_cpu_porcentagem_core1 = 4;
-    double uso_de_memoria_porcentagem_total = 5;
-    double uso_de_memoria_porcentagem_cache = 6;
-    double uso_de_memoria_bytes_total = 7;
-    double uso_de_armazenamento_porcentagem_discoC = 8;
-    double uso_de_armazenamento_porcentagem_discoD = 9;
-    double uso_de_armazenamento_bytes_discoC = 10;
+    string id = 1;
+    string ip = 2;
+    string timestamp = 3;
+    double uso_de_cpu_porcentagem_core0 = 4;
+    double uso_de_cpu_porcentagem_core1 = 5;
+    double uso_de_memoria_porcentagem_total = 6;
+    double uso_de_memoria_porcentagem_cache = 7;
+    double uso_de_memoria_bytes_total = 8;
+    double uso_de_armazenamento_porcentagem_discoC = 9;
+    double uso_de_armazenamento_porcentagem_discoD = 10;
+    double uso_de_armazenamento_bytes_discoC = 11;
 }

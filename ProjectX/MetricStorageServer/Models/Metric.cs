@@ -1,14 +1,20 @@
-﻿public class Metric
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+public class Metric
 {
-    public required string Ip { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } // Representa o campo _id no MongoDB
+
+    public string Ip { get; set; }
     public DateTime Timestamp { get; set; }
     public double UsoDeCpuPorcentagemCore0 { get; set; }
     public double UsoDeCpuPorcentagemCore1 { get; set; }
     public double UsoDeMemoriaPorcentagemTotal { get; set; }
     public double UsoDeMemoriaPorcentagemCache { get; set; }
-    public double UsoDeMemoriaBytesTotal { get; set; }
+    public long UsoDeMemoriaBytesTotal { get; set; }
     public double UsoDeArmazenamentoPorcentagemDiscoC { get; set; }
     public double UsoDeArmazenamentoPorcentagemDiscoD { get; set; }
-    public double UsoDeArmazenamentoBytesDiscoC { get; set; }
+    public long UsoDeArmazenamentoBytesDiscoC { get; set; }
 }
-

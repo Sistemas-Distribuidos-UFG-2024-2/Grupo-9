@@ -33,7 +33,7 @@ namespace MetricStorageServer.Components
             // Inserindo as métricas no banco MongoDB
             await _context.GetCollection<Metric>("metrics").InsertOneAsync(metric);
 
-            return new SaveMetricResponse { Success = true };
+            return new SaveMetricResponse { Success = true, Id = metric.Id.ToString() };
         }
 
         // Método para obter métricas
