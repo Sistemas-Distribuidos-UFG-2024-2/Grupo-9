@@ -21,7 +21,7 @@ async def serveHttp(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print ("Socket successfully created")
 
-    sock.bind(("localhost", port))
+    sock.bind(("0.0.0.0", port))
     print ("Socket binded to", port)
 
     sock.listen(5)
@@ -48,5 +48,8 @@ async def main(interval):
                 )
 
 if __name__ == '__main__':
-    interval = sys.argv[1]
+    if len(sys.argv) > 1:
+        interval = sys.argv[1]
+    else:
+        interval = 3
     asyncio.run(main(int(interval)))
