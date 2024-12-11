@@ -18,9 +18,12 @@ Atualmente as métricas coletadas são:
 
 ### Como rodar esse programa
 
-Rode usando: `python3 main.py [intervalo-de-coleta-de-metricas]`
+Rode usando: `python3 main.py [intervalo-de-coleta-de-metricas] [storage_url]`
 
 O `[intervalo-de-coleta-de-metricas]` especifica de quanto em quanto tempo (em segundos) o coletor deve atualizar as métricas. Esse valor não pode ser menor do que 1. O valor padrão (se o argumento não for passado) é 3.
+O `[storage_url]` especifica o endereço para comunicação com o armazenador de metricas para que ele possa captar a requisição e manipular os dados para que sejam armazenados adequadamente (no momento estamos usando a execução do armazenador localmente com o endereço "http://localhost:5122").*
+
+* = Como para este projeto não realizamos a publicação, certifique-se de estar rodando o armazenador de metricas antes da execução do coletor.
 
 ### TO DO
 
