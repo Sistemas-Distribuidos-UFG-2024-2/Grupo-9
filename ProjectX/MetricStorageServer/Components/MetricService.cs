@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using static MetricStorageServer.MetricService;
 
@@ -18,6 +19,7 @@ namespace MetricStorageServer.Components
         {
             var metric = new Metric
             {
+                Id = ObjectId.GenerateNewId().ToString(),
                 Ip = request.Ip,
                 Timestamp = DateTime.UtcNow.ToString(),
                 UsoDeCpuPorcentagemCore0 = request.UsoDeCpuPorcentagemCore0,

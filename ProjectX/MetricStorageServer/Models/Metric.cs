@@ -5,7 +5,7 @@ public class Metric
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; } // Representa o campo _id no MongoDB
+    public string Id { get; set; }
 
     public string Ip { get; set; }
     public DateTime Timestamp { get; set; }
