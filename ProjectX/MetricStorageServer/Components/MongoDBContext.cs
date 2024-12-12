@@ -7,7 +7,7 @@ namespace MetricStorageServer.Components
 
         public MongoDbContext()
         {
-            const string connectionUri = "mongodb+srv://santoseduardo:lTHx2XrZCWSPqdYr@cluster1.gf7ol.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1";
+            const string connectionUri = "mongodb+srv://yatherson:bdStorage@metricsstorage.4py3f.mongodb.net/";
             var settings = MongoClientSettings.FromConnectionString(connectionUri);
 
             // Configurando a versão da API do servidor
