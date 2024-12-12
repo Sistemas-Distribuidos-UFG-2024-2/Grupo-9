@@ -46,19 +46,16 @@ namespace MetricStorageServer.Components
                 .ToListAsync();
 
             var response = new GetMetricsResponse();
-            response.Metrics.AddRange(metrics.Select(m => new Metric
+
+            foreach (var metric in metrics)
             {
-                Ip = m.Ip,
-                Timestamp = m.Timestamp.ToString(),
-                UsoDeCpuPorcentagemCore0 = m.UsoDeCpuPorcentagemCore0,
-                UsoDeCpuPorcentagemCore1 = m.UsoDeCpuPorcentagemCore1,
-                UsoDeMemoriaPorcentagemTotal = m.UsoDeMemoriaPorcentagemTotal,
-                UsoDeMemoriaPorcentagemCache = m.UsoDeMemoriaPorcentagemCache,
-                UsoDeMemoriaBytesTotal = m.UsoDeMemoriaBytesTotal,
-                UsoDeArmazenamentoPorcentagemDiscoC = m.UsoDeArmazenamentoPorcentagemDiscoC,
-                UsoDeArmazenamentoPorcentagemDiscoD = m.UsoDeArmazenamentoPorcentagemDiscoD,
-                UsoDeArmazenamentoBytesDiscoC = m.UsoDeArmazenamentoBytesDiscoC
-            }));
+                if (!response.MetricsByIp.ContainsKey(metric.Ip))
+                {
+                    response.MetricsByIp.Add(metric.Ip, new MetricList());
+                }
+
+                response.MetricsByIp[metric.Ip].Metrics.Add(metric);
+            }
 
             return response;
         }

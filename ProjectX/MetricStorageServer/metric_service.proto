@@ -27,6 +27,10 @@ message SaveMetricResponse {
 message GetMetricsRequest {}
 
 message GetMetricsResponse {
+    map<string, MetricList> metrics_by_ip = 1; // Alteração principal aqui
+}
+
+message MetricList {
     repeated Metric metrics = 1;
 }
 
