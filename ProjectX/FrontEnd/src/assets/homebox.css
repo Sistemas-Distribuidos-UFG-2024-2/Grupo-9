@@ -1,0 +1,82 @@
+/* homebox.css */
+.home-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.home-box {
+  flex: 0 0 350px; /* Diminuído de 500px para 350px */
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 350px; /* Garante largura mínima */
+  max-width: 350px; /* Garante largura máxima */
+  min-height: 200px; /* Ajuste esse valor conforme necessário */
+  padding-bottom: 20px;
+  position: relative; /* Torna o elemento pai posicionável */
+}
+
+.metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  position: relative; /* Torna o elemento pai posicionável */
+  z-index: 1; /* Eleva o elemento acima do fundo preto */
+}
+
+.metric-item {
+  text-align: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+  flex-basis: 33.33%;
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  justify-content: center; /* Centraliza verticalmente o conteúdo */
+  position: static; /* Torna o elemento posicionável */
+  z-index: auto; /* Eleva ainda mais o elemento acima do fundo preto */
+  background-color: white; /* Adiciona um fundo branco para sobrepor o preto */
+  padding-bottom: 20px; /* Adiciona espaçamento na parte inferior */
+}
+
+.metric-item h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-weight: bold;
+}
+
+.metric-value {
+  color: #333;
+  font-weight: 500;
+  font-size: 1.2em; /* Aumenta o tamanho da fonte para o valor de armazenamento */
+}
+
+/* Estados */
+.state-label {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.green { color: #1a7431; }
+.yellow { color: #d39e00; }
+.red { color: #c82333; }
+
+/* Informações de timestamp */
+small {
+  color: #666;
+  display: block;
+  margin: 5px 0;
+}

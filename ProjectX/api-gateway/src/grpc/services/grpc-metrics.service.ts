@@ -11,9 +11,9 @@ import {
 import * as protoLoader from '@grpc/proto-loader';
 
 interface Metric {
-  id?: string;
+  id: string;
   ip: string;
-  timestamp?: string;
+  timestamp: string;
   uso_de_cpu_porcentagem_core0: number;
   uso_de_cpu_porcentagem_core1: number;
   uso_de_memoria_porcentagem_total: number;
@@ -24,13 +24,16 @@ interface Metric {
   uso_de_armazenamento_bytes_discoC: number;
 }
 
-interface SaveMetricResponse {
-  success: boolean;
-  id: string;
+interface MetricList {
+  metrics: Metric[];
+}
+
+interface MetricsByIp {
+  [ip: string]: MetricList;
 }
 
 interface GetMetricsResponse {
-  metrics: Metric[];
+  metrics_by_ip: MetricsByIp;
 }
 
 @Injectable()
@@ -73,7 +76,9 @@ export class GrpcMetricsService {
     }
   }
 
-  async saveMetric(metricData: Metric): Promise<SaveMetricResponse> {
+  async saveMetric(
+    metricData: Partial<Metric>,
+  ): Promise<{ success: boolean; id: string }> {
     return new Promise((resolve, reject) => {
       try {
         console.log('Saving metric via gRPC:', metricData);
@@ -97,12 +102,10 @@ export class GrpcMetricsService {
 
         this.grpcClient.SaveMetric(
           request,
-          (error: any, response: SaveMetricResponse) => {
+          (error: any, response: { success: boolean; id: string }) => {
             if (error) {
               console.error('Error saving metric:', error);
-              reject(
-                new Error(`Failed to save metric via gRPC: ${error.message}`),
-              );
+              reject(error);
               return;
             }
 
@@ -117,7 +120,7 @@ export class GrpcMetricsService {
     });
   }
 
-  async getMetrics(): Promise<Metric[]> {
+  async getMetrics(): Promise<{ [ip: string]: Metric[] }> {
     return new Promise((resolve, reject) => {
       try {
         console.log('Fetching metrics via gRPC');
@@ -131,33 +134,44 @@ export class GrpcMetricsService {
               return;
             }
 
-            if (!response || !response.metrics) {
-              console.log('No metrics found, returning empty array');
-              resolve([]);
+            if (!response || !response.metrics_by_ip) {
+              console.log('No metrics found, returning empty object');
+              resolve({});
               return;
             }
 
-            const metrics = response.metrics.map((metric: Metric) => ({
-              id: metric.id,
-              ip: metric.ip,
-              timestamp: metric.timestamp,
-              uso_de_cpu_porcentagem_core0: metric.uso_de_cpu_porcentagem_core0,
-              uso_de_cpu_porcentagem_core1: metric.uso_de_cpu_porcentagem_core1,
-              uso_de_memoria_porcentagem_total:
-                metric.uso_de_memoria_porcentagem_total,
-              uso_de_memoria_porcentagem_cache:
-                metric.uso_de_memoria_porcentagem_cache,
-              uso_de_memoria_bytes_total: metric.uso_de_memoria_bytes_total,
-              uso_de_armazenamento_porcentagem_discoC:
-                metric.uso_de_armazenamento_porcentagem_discoC,
-              uso_de_armazenamento_porcentagem_discoD:
-                metric.uso_de_armazenamento_porcentagem_discoD,
-              uso_de_armazenamento_bytes_discoC:
-                metric.uso_de_armazenamento_bytes_discoC,
-            }));
+            // Transformar o resultado para um formato mais amigável
+            const result: { [ip: string]: Metric[] } = {};
 
-            console.log(`Successfully fetched ${metrics.length} metrics`);
-            resolve(metrics);
+            Object.entries(response.metrics_by_ip).forEach(
+              ([ip, metricList]) => {
+                result[ip] = metricList.metrics.map((metric) => ({
+                  id: metric.id,
+                  ip: metric.ip,
+                  timestamp: metric.timestamp,
+                  uso_de_cpu_porcentagem_core0:
+                    metric.uso_de_cpu_porcentagem_core0,
+                  uso_de_cpu_porcentagem_core1:
+                    metric.uso_de_cpu_porcentagem_core1,
+                  uso_de_memoria_porcentagem_total:
+                    metric.uso_de_memoria_porcentagem_total,
+                  uso_de_memoria_porcentagem_cache:
+                    metric.uso_de_memoria_porcentagem_cache,
+                  uso_de_memoria_bytes_total: metric.uso_de_memoria_bytes_total,
+                  uso_de_armazenamento_porcentagem_discoC:
+                    metric.uso_de_armazenamento_porcentagem_discoC,
+                  uso_de_armazenamento_porcentagem_discoD:
+                    metric.uso_de_armazenamento_porcentagem_discoD,
+                  uso_de_armazenamento_bytes_discoC:
+                    metric.uso_de_armazenamento_bytes_discoC,
+                }));
+              },
+            );
+
+            console.log(
+              `Successfully fetched metrics for ${Object.keys(result).length} IPs`,
+            );
+            resolve(result);
           },
         );
       } catch (error) {
@@ -165,15 +179,5 @@ export class GrpcMetricsService {
         reject(error);
       }
     });
-  }
-
-  async healthCheck(): Promise<boolean> {
-    try {
-      await this.getMetrics();
-      return true;
-    } catch (error) {
-      console.error('Health check failed:', error);
-      return false;
-    }
   }
 }
