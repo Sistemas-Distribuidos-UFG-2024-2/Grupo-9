@@ -12,6 +12,7 @@ import {
 import { MetricsController } from './metrics/controller/metrics.controller';
 import { MetricsCollectorService } from './metrics/services/metric.service';
 import { validationSchema } from 'src/config/validation.schema';
+import { GrpcMetricsService } from './grpc/services/grpc-metrics.service';
 
 @Module({
   imports: [
@@ -61,11 +62,17 @@ import { validationSchema } from 'src/config/validation.schema';
       provide: MetricsCollectorService,
       useClass: MetricsCollectorService,
     },
+    // Adicionando o serviço gRPC
+    {
+      provide: GrpcMetricsService,
+      useClass: GrpcMetricsService,
+    },
   ],
   exports: [
     // Exporta serviços que podem ser usados em outros módulos
     ApiGatewayService,
     MetricsCollectorService,
+    GrpcMetricsService, // Exportando o serviço gRPC
   ],
 })
 export class AppModule { }

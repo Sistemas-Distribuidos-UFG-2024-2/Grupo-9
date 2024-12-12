@@ -1,4 +1,3 @@
-// src/app.controller.ts
 import {
   Controller,
   Get,
@@ -14,12 +13,14 @@ import {
 import { Response } from 'express';
 import { ApiGatewayService } from './app.service';
 import { MetricsCollectorService } from './metrics/services/metric.service';
+import { GrpcMetricsService } from './grpc/services/grpc-metrics.service';
 
 @Controller()
 export class AppController {
   constructor(
     @Inject(ApiGatewayService) private apiGatewayService: ApiGatewayService,
     private readonly metricsService: MetricsCollectorService,
+    private readonly grpcMetricsService: GrpcMetricsService, // Adicione o serviço gRPC
   ) { }
 
   @Get(':serviceName/:path(*)')
@@ -29,7 +30,7 @@ export class AppController {
     @Headers() headers: Record<string, string>,
     @Res() res: Response,
   ) {
-    console.log(`GET request to /${serviceName}/${path}`); // Log the endpoint
+    console.log(`GET request to /${serviceName}/${path}`);
 
     try {
       if (serviceName === 'metrics') {
@@ -47,6 +48,16 @@ export class AppController {
               : undefined,
           );
           return res.status(HttpStatus.OK).json(history);
+        } else if (path === 'grpc/metrics') {
+          // Nova rota para gRPC
+          try {
+            const metrics = await this.grpcMetricsService.getMetrics();
+            return res.status(HttpStatus.OK).json(metrics);
+          } catch (error) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+              message: `Erro ao obter métricas via gRPC: ${error.message}`,
+            });
+          }
         } else {
           return res
             .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -78,6 +89,17 @@ export class AppController {
   ) {
     try {
       if (serviceName === 'metrics') {
+        if (path === 'grpc/metrics') {
+          // Nova rota para gRPC
+          try {
+            const result = await this.grpcMetricsService.saveMetric(body);
+            return res.status(HttpStatus.OK).json(result);
+          } catch (error) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+              message: `Erro ao salvar métrica via gRPC: ${error.message}`,
+            });
+          }
+        }
         return res
           .status(HttpStatus.METHOD_NOT_ALLOWED)
           .json({ message: 'Method not allowed for metrics service' });
