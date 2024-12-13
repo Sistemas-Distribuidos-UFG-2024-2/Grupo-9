@@ -96,6 +96,17 @@ new_namecache = function()
         return 404
     end
 
+    function namecache:get_all_names()
+        local all_names = {}
+        if ( #namecache.names == 0) then
+            return 404
+        end
+        for i,v in ipairs(namecache.names) do
+          table.insert(all_names,v[1])
+        end
+        return 200, all_names
+    end
+
     function namecache:get_all_entries(name)
         local entry = {}
         if ( #namecache.names == 0) then
