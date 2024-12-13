@@ -4,11 +4,22 @@ import '../assets/filteroptions.css';
 const FilterOptions = ({ onFilterChange, availableFilters }) => {
   const handleFilterChange = (e) => {
     const { value, checked } = e.target;
-    onFilterChange(prevFilters =>
-      checked
-        ? [...prevFilters, value]
-        : prevFilters.filter(filter => filter !== value)
-    );
+    onFilterChange(prevFilters => {
+      if (checked) {
+        return [...prevFilters, value];
+      } else {
+        return prevFilters.filter(filter => filter !== value);
+      }
+    });
+  };
+
+  const getStateColorClass = (state) => {
+    switch (state) {
+      case '#Normal': return 'green';
+      case '#Alerta': return 'yellow';
+      case '#Crítico': return 'red';
+      default: return '';
+    }
   };
 
   const states = [
@@ -22,13 +33,15 @@ const FilterOptions = ({ onFilterChange, availableFilters }) => {
       <div className="filter-section">
         <h4>Estados</h4>
         {states.map(state => (
-          <label key={state.value}>
+          <label key={state.value} className="filter-label">
             <input 
               type="checkbox" 
-              value={state.value} 
+              value={state.value}
               onChange={handleFilterChange}
             />
-            {state.label}
+            <span className={`state-label ${getStateColorClass(state.value)}`}>
+              {state.label}
+            </span>
           </label>
         ))}
       </div>
@@ -36,15 +49,13 @@ const FilterOptions = ({ onFilterChange, availableFilters }) => {
       <div className="filter-section">
         <h4>IPs Monitorados</h4>
         {availableFilters.map(ip => (
-          <label key={ip}>
+          <label key={ip} className="filter-label">
             <input
               type="checkbox"
               value={ip}
               onChange={handleFilterChange}
             />
-                        <span className="ip">{ip}</span>  {/* Added class "ip" */}
-
-            {ip}
+            <span className="ip">{ip}</span>
           </label>
         ))}
       </div>
