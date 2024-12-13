@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        My<span>App</span>
+        Gerenciador De Desempenho <span>Distribuído</span>
       </div>
       <Navbar />
     </header>

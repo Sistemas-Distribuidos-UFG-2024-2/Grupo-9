@@ -2,31 +2,64 @@ import React, { useState } from 'react';
 import SearchBar from './SearchBar';
 import FilterOptions from './FilterOptions';
 import HomeBox from './HomeBox';
-import useMetrics from './useMetrics'; // Importe o hook
+import useMetrics from './useMetrics';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const metrics = useMetrics('http://localhost:3000/metrics/metrics', 10000); // Atualiza a cada 10 segundos
+  
+  const metricsData = useMetrics('http://localhost:3000/metrics/grpc/metrics', 10000);
 
-  if (!metrics) return <div>Loading...</div>; // Mostra um loader enquanto as métricas estão sendo carregadas
+  if (!metricsData) return <div>Loading...</div>;
 
-  const data = metrics.items; // Supondo que o endpoint retorna um array `items`
+  // Função para determinar o estado baseado nas métricas
+  const determineState = (metric) => {
+    const cpuUsage = Math.max(metric.uso_de_cpu_porcentagem_core0, metric.uso_de_cpu_porcentagem_core1);
+    const memoryUsage = metric.uso_de_memoria_porcentagem_total;
+    const storageUsage = metric.uso_de_armazenamento_porcentagem_discoC;
+    
+    if (cpuUsage > 90 || memoryUsage > 90 || storageUsage > 90) return '#Crítico';
+    if (cpuUsage > 70 || memoryUsage > 70 || storageUsage > 70) return '#Alerta';
+    return '#Normal';
+  };
 
-  // Filtra os dados com base na pesquisa e nos filtros
-  const filteredData = data.filter(item => {
-    const matchesQuery = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesState = selectedFilters.length === 0 || selectedFilters.includes(item.state);
-    return matchesQuery && matchesState;
-  });
+  // Filtragem única combinando busca por IP e estado
+  const filteredData = Object.entries(metricsData)
+    .filter(([ip, metrics]) => {
+      if (!ip || ip === "" || !metrics || metrics.length === 0) return false;
 
+      const state = determineState(metrics[metrics.length - 1]);
+      const searchLower = searchQuery.toLowerCase();
+
+      // Busca por IP ou estado
+      const matchesIP = ip.toLowerCase().includes(searchLower);
+      const matchesState = searchLower 
+        ? state.toLowerCase().includes(searchLower) || 
+          state.toLowerCase().replace('#', '').includes(searchLower)
+        : true;
+
+      // Verificação dos filtros selecionados
+      const matchesFilters = selectedFilters.length === 0 || 
+                           selectedFilters.includes(ip) || 
+                           selectedFilters.includes(state);
+
+      return (matchesIP || matchesState) && matchesFilters;
+    });
+ 
   return (
     <section id="home" className="home">
       <SearchBar onSearch={setSearchQuery} />
-      <FilterOptions onFilterChange={setSelectedFilters} />
+      <FilterOptions
+        onFilterChange={setSelectedFilters}
+        availableFilters={Object.keys(metricsData).filter(ip => ip && ip !== "")}
+      />
       <div className="home-container">
-        {filteredData.map((item, index) => (
-          <HomeBox key={index} item={item} /> // Renderiza um componente HomeBox para cada item filtrado
+      {filteredData.map(([ip, metrics]) => (
+          <HomeBox
+            key={ip}
+            ip={ip}
+            metrics={metrics}
+          />
         ))}
       </div>
     </section>

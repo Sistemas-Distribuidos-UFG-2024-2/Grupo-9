@@ -1,13 +1,15 @@
 import React from 'react';
 import './assets/styles.css';
 import Header from './components/Header';
-import Home from './components/Home';  // Já inclui o componente Home
+import Home from './components/Home';
+import Contact from './components/Contact'; // Importando o componente Contact
 
 function App() {
   return (
     <div>
       <Header />
-      <Home /> {/* Exibe o componente Home, que usa o hook useMetrics */}
+      <Home />
+      <Contact /> {/* Adicionando o componente Contact */}
     </div>
   );
 }
